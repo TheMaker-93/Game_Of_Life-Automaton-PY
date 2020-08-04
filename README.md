@@ -3,4 +3,4 @@
 
 Using: 
 1. Python
-2.Pygame
+2. Pygame
