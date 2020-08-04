@@ -35,6 +35,11 @@ class GameOfLifeSimulation:
         for cell in self.cell_matrix:
             cell.compute_new_state()
             
+    def draw_cells(self):
+        for cell in self.cell_matrix:
+            cell.draw()
+            
+            
 class GridObject:
     
     _position_On_Grid = ()       # position on the grid of objects (x and y)
@@ -74,6 +79,9 @@ class BinaryCell(GridObject):
       
     def update_state(self):
         print ("UPDATING STATE")
+        
+    def draw(self):
+        print ("TO COMPLETE")
           
 
 class CellMatrix:
