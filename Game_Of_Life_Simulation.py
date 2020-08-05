@@ -110,11 +110,15 @@ class BinaryCell(GridObject):
 class GameOfLifeSimulation:
 
     cell_matrix = CellMatrix((0,0), (0,0), 0, 0)
+    _ruleset = 0
     
-    def __init__(self,x_size, y_size, screen_width, screen_height):
+    def __init__(self,x_size, y_size, screen_width, screen_height, ruleset):
         
         # create the matrix    
         cell_matrix = CellMatrix((0,0), (100,100), y_size, x_size)
+        
+        # add the ruleset
+        self._ruleset = ruleset
         
         # create the cells
         
@@ -132,8 +136,10 @@ class GameOfLifeSimulation:
                 
                 start_filled = (i_x + i_y) % 2
                 
+                # ------------------------------------------------------------------------------------------ #
                 cell_instance = BinaryCell(start_filled,(x_position,y_position),width, height, i_x + i_y)          # create a new cell
-                
+                # ------------------------------------------------------------------------------------------ #
+
                 cell_matrix.add_cell(cell_instance)              # add the cell to the list
                 cell_instance.print_data()
         

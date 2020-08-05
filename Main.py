@@ -25,7 +25,7 @@ SCREEN_TITLE = "Game_Of_Life"
 SCREEN_SIZE_MULTIPLIER = (1,1)
 SCREEN_COMPUTED_SIZE = (int(SCREEN_BASE_SIZE[0] * SCREEN_SIZE_MULTIPLIER[0]) ,int(SCREEN_BASE_SIZE[1] * SCREEN_SIZE_MULTIPLIER[1]))
 clock = pygame.time.Clock()
-TICK_RATE = 1  
+TICK_RATE = 10  
 is_simulation_over = False
 
 # create the new window
@@ -35,17 +35,22 @@ pygame.display.set_caption(SCREEN_TITLE)
 
 # EXECUTION --------------------------------------------------------------------------------------------------------------------- #
     
-ROW_AMOUNT = 100
-COLL_AMOUNT = 100
+ROW_AMOUNT = 50
+COLL_AMOUNT = 50
 
 # CREATE THE RULES -------------------------------------------------------------------------------------------------------------- #
-simulation_rules = []
-rule = Rule("New Rule",1,0,1,5,1)
 
+simulation_rules = []
+simulation_rules.append(Rule("Death by underpopulation",True,True,0,1,False))
+simulation_rules.append(Rule("sustainable life",True,True,2,3,True))
+simulation_rules.append(Rule("Death by overpopulation",True,True,4,-1,False))     # -1 == infinito a la hora de comprobarlo
+simulation_rules.append(Rule("Birth",False,True,3,3,True))
+
+game_of_life_ruleset = Ruleset(simulation_rules)
 
 # CREATE SIMULATION ------------------------------------------------------------------------------------------------------------- #
 sys.stdout.write(BLUE)
-game_of_life = GameOfLifeSimulation(COLL_AMOUNT, ROW_AMOUNT,SCREEN_COMPUTED_SIZE[0],SCREEN_COMPUTED_SIZE[1])
+game_of_life = GameOfLifeSimulation(COLL_AMOUNT, ROW_AMOUNT,SCREEN_COMPUTED_SIZE[0],SCREEN_COMPUTED_SIZE[1],game_of_life_ruleset)
 
 sys.stdout.write(YELLOW + BOLD)     # set the color of the text
 print ("Setup performed succesfully")
@@ -68,13 +73,13 @@ while is_simulation_over == False:
 
 
     # apply the rules to the cells
-    game_of_life.compute_cells()
+    # game_of_life.compute_cells()
     
     # update the state of the cells
-    game_of_life.update_cells
+    # game_of_life.update_cells
     
     # redraw the matrix
-    game_of_life.draw_cells(screen)
+    # game_of_life.draw_cells(screen)
 
 print ("Exiting window")
 pygame.quit()
