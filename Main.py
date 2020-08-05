@@ -35,8 +35,8 @@ pygame.display.set_caption(SCREEN_TITLE)
 
 # EXECUTION --------------------------------------------------------------------------------------------------------------------- #
     
-ROW_AMOUNT = 50
-COLL_AMOUNT = 50
+ROW_AMOUNT = 46
+COLL_AMOUNT = 46
 
 # CREATE THE RULES -------------------------------------------------------------------------------------------------------------- #
 
@@ -57,8 +57,7 @@ print ("Setup performed succesfully")
 sys.stdout.write(RESET)             # RESET the color of the text
 
 
-
-# # MAIN SYSTEM LOOP
+# # MAIN SYSTEM LOOP -------------------------------------------------------------------------------------------------------------
 while is_simulation_over == False:
     
     e = pygame.event.poll()
@@ -79,7 +78,7 @@ while is_simulation_over == False:
     # game_of_life.update_cells
     
     # redraw the matrix
-    # game_of_life.draw_cells(screen)
+    game_of_life.draw_cells(screen)
 
 print ("Exiting window")
 pygame.quit()

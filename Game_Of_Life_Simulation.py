@@ -101,10 +101,10 @@ class BinaryCell(GridObject):
         
         if self.is_Filled:
             pygame.draw.rect(screen,(pygame.Color("black")), pygame.Rect(self._position_On_Grid,(self._width, self._height)))       # square
-            # pygame.draw.rect(screen,(pygame.Color("white")), pygame.Rect(self._position_On_Grid,(self._width, self._height)),-20)    # square border
+            # pygame.draw.rect(screen,(pygame.Color("white")), pygame.Rect(self._position_On_Grid,(self._width, self._height)),1)    # square border
         else:
             pygame.draw.rect(screen,(pygame.Color("white")), pygame.Rect(self._position_On_Grid,(self._width, self._height)))
-            # pygame.draw.rect(screen,pygame.Color("black"), pygame.Rect(self._position_On_Grid,(self._width, self._height)),-20)
+            pygame.draw.rect(screen,pygame.Color("black"), pygame.Rect(self._position_On_Grid,(self._width, self._height)),1)
 
 
 class GameOfLifeSimulation:
@@ -135,6 +135,7 @@ class GameOfLifeSimulation:
                 y_position = (i_y / (y_size-1)) + height * i_y
                 
                 start_filled = (i_x + i_y) % 2
+                # start_filled = (i_x + i_y) % 1
                 
                 # ------------------------------------------------------------------------------------------ #
                 cell_instance = BinaryCell(start_filled,(x_position,y_position),width, height, i_x + i_y)          # create a new cell
