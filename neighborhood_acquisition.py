@@ -10,7 +10,7 @@ from Game_Of_Life_Simulation import *
 from neighborhood_acquisition_algoritms import *
 
 class NeighborhoodAcquisition:
-    
+
     @staticmethod
     def get_neighborhood(target_cell, cell_matrix, acquisition_algoritm):
         
@@ -40,7 +40,6 @@ class NeighborhoodAcquisition:
         for position in neighbors_positions:
             #print (" The type is " + str(type(position)))
             selected_cell = cell_matrix.get_cell(position[0], position[1])
-
             output_list.append( selected_cell )        # get the cells at those verified positions
 
         # if there is alist of cells to return then return them
@@ -66,14 +65,8 @@ class NeighborhoodAcquisition:
         for position in neighbors_positions:
             #print (" The type is " + str(type(position)))
             selected_cell = cell_matrix.get_cell(position[0], position[1])
-
-            # debug
-            # if (target_cell_x_pos == 2 and target_cell_y_pos == 2):
-            #     print ("HIGLIGHTING")
-            # selected_cell.is_higlighted = True
-
             output_list.append( selected_cell )        # get the cells at those verified positions
-        
+
         # if there is alist of cells to return then return them
         if len(output_list) != 0:
             return output_list

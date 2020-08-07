@@ -38,8 +38,8 @@ pygame.display.set_caption(SCREEN_TITLE)
 
 # EXECUTION --------------------------------------------------------------------------------------------------------------------- #
     
-ROW_AMOUNT = 34
-COLL_AMOUNT = 34
+ROW_AMOUNT = 60
+COLL_AMOUNT = 60
 
 # CREATE THE RULES -------------------------------------------------------------------------------------------------------------- #
 
@@ -54,7 +54,6 @@ game_of_life_ruleset = Ruleset(simulation_rules)
 sys.stdout.write(YELLOW + BOLD)     # set the color of the text
 print ("\t Ruleset configured succesfully")
 sys.stdout.write(RESET)             # RESET the color of the text
-
 
 
 # CREATE SIMULATION ------------------------------------------------------------------------------------------------------------- #
@@ -78,7 +77,7 @@ while is_simulation_over == False:
     clock.tick(TICK_RATE)
     
     # tick rate testing (background)
-    screen.fill(get_random_color(False))
+    # screen.fill(get_random_color(False))
 
     # ACT DEPENDING THE SIMULATION STATE
     if current_simulation_state == SimulationStates.COMPUTING:
@@ -89,12 +88,14 @@ while is_simulation_over == False:
         if game_of_life.compute_cell_per_cell() != None:
             current_simulation_state = SimulationStates.UPDATING
 
+
     elif current_simulation_state == SimulationStates.UPDATING:
         # game_of_life.update_cells()
         # current_simulation_state = SimulationStates.COMPUTING
         
         if game_of_life.update_cell_per_cell() != None:
             current_simulation_state = SimulationStates.COMPUTING
+
 
     # debug cells data
     # game_of_life.cell_matrix.print_cells_data()
