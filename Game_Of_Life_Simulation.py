@@ -8,22 +8,23 @@ import pygame
 import sys
 from colors import *
 from Rule import *
+from random import randint
 
 class CellMatrix:
     
     origin_position = ()
     extreme_position = ()
     
-    x_size = 0
-    y_size = 0
+    coll_amount = 0
+    row_amount = 0
     
     _list_Of_Cells = []      # list with all the binary cells of the system
     
     def __init__(self,origin, extreme, row_amount, coll_amount):       
         self.origin_position = origin
         self.extreme_position = extreme
-        self.x_size = coll_amount
-        self.y_size = row_amount
+        self.coll_amount = coll_amount
+        self.row_amount = row_amount
 
     def get_cells_count(self):
         amount = len(self._list_Of_Cells)
@@ -32,29 +33,32 @@ class CellMatrix:
     def get_cells(self):
         return self._list_Of_Cells
 
+    def print_cells_data(self):
+        for cell in self._list_Of_Cells:
+            cell.print_data()
+
     def get_cell_by_index(self, index):
         return self._list_Of_Cells[index]
 
     def get_cell(self,x_pos,y_pos):
         # convert the x_pos and the y_pos to an index
-        id = self.x_size * x_pos + y_pos
+        # id = self.coll_amount * x_pos + y_pos          BAD
+        
+        # Id = Current Row * Matrix Width + Current Coll
+        id = y_pos * self.coll_amount + x_pos
+        print ("with x position being: " + str(x_pos) + " and y position: " + str(y_pos) + " the resulting id is" +str(id))
         return self.get_cell_by_index(id)
     
     def add_cell(self,cell_object):
         self._list_Of_Cells.append(cell_object)
-
-        sys.stdout.write(GREEN)
-        print ("Succesfull addition")
-        sys.stdout.write(RESET)
 
     def check_if_cell_inside_matrix(self,cell_object):
         object_position = (cell_object.get_position_on_grid())
         return self.check_if_position_inside_matrix(object_position[0], object_position[1])
 
     def check_if_position_inside_matrix(self,x_pos,y_pos):
-        if ((x_pos < 0) or (x_pos >= self.x_size)) or ((y_pos < 0) or (y_pos >= self.y_size)):
+        if ((x_pos < 0) or (x_pos >= self.coll_amount)) or ((y_pos < 0) or (y_pos >= self.row_amount)):
             return True
-
         
 class GridObject:
     
@@ -62,6 +66,7 @@ class GridObject:
     _position_on_grid = ()         # integer position inside grid
         
     def __init__(self,position_on_screen, position_on_grid):
+        print (str(position_on_screen) + " " + str(position_on_grid))
         self._position_on_screen = position_on_screen
         self._position_on_grid = position_on_grid
         
@@ -86,6 +91,8 @@ class BinaryCell(GridObject):
     _height = 0     # ""
     #_extreme
 
+    is_higlighted = False
+
     def __init__ (self, start_Filled, screen_position, grid_position, width, height, cell_id):
         super().__init__(screen_position, grid_position)
         
@@ -94,8 +101,7 @@ class BinaryCell(GridObject):
         self._width = width
         self._height = height
         
-        # _extreme = grid_Position + (width,height)
-        
+        # _extreme = grid_Position + (width,height)    
         self.is_filled = start_Filled
         
     def print_data (self):
@@ -132,6 +138,9 @@ class BinaryCell(GridObject):
             pygame.draw.rect(screen,(pygame.Color("white")), pygame.Rect(self._position_on_screen,(self._width, self._height)))
             pygame.draw.rect(screen,pygame.Color("black"), pygame.Rect(self._position_on_screen,(self._width, self._height)),1)
         
+        if self.is_higlighted:
+            pygame.draw.rect(screen,(pygame.Color("orange")), pygame.Rect(self._position_on_screen ,(self._width*0.4, self._height*0.4)))       # square
+
         # blueprint
         # pygame.draw.rect(_surface,_color,pygame.Rect(_top,_left,_width,_height))
         
@@ -142,32 +151,42 @@ class GameOfLifeSimulation:
 
     cell_matrix = CellMatrix((0,0), (0,0), 0, 0)
     _ruleset = Ruleset([])
+
+    # for the iteration cell per cell
+    _current_iteration_index = 0
     
-    def __init__(self,x_size, y_size, screen_width, screen_height, ruleset):
+    def __init__(self,coll_amount, row_amount, screen_width, screen_height, ruleset):
         
         # create the matrix    
-        cell_matrix = CellMatrix((0,0), (100,100), y_size, x_size)
+        cell_matrix = CellMatrix((0,0), (100,100), row_amount, coll_amount)
         
         # add the ruleset
         self._ruleset = ruleset
         
         # compute cell width and height
-        width = screen_width / x_size
-        height = screen_height / y_size
+        width = screen_width / coll_amount
+        height = screen_height / row_amount
                 
         # iteration over the X (colls)
-        for i_x in range (0,x_size):
+        for row in range (0,coll_amount):
             # iterateion over the Y (rows)
-            for i_y in range (0, y_size):
+            for coll in range (0, row_amount):
                 
-                x_position = (i_x / (x_size-1)) + width * i_x
-                y_position = (i_y / (y_size-1)) + height * i_y
+                x_position = (coll / (coll_amount-1)) + width * coll
+                y_position = (row / (row_amount-1)) + height * row
                 
-                #start_filled = (i_x + i_y) % 2
-                start_filled = (i_x + i_y) % 3
+                # y_position = (coll / (coll_amount-1)) + width * coll
+                # x_position = (row / (row_amount-1)) + height * row
+
+                #start_filled = (coll + row) % 2
+                # start_filled = bool((coll + row) % 3)
+                # start_filled = True
+                start_filled = bool(randint(0,1))
                 
+                # Id = Current Row * Matrix Width + Current Coll
+
                 # ------------------------------------------------------------------------------------------ #
-                cell_instance = BinaryCell(start_filled,(x_position,y_position),(i_x,i_y),width, height, i_x + i_y)          # create a new cell
+                cell_instance = BinaryCell(start_filled,(x_position,y_position),(coll,row),width, height, row * coll_amount + coll)          # create a new cell
                 # ------------------------------------------------------------------------------------------ #
 
                 cell_matrix.add_cell(cell_instance)              # add the cell to the list
@@ -195,6 +214,41 @@ class GameOfLifeSimulation:
         for cell in self.cell_matrix.get_cells():
             cell.compute_new_state(self._ruleset, self.cell_matrix)
             
+    def compute_cell_per_cell(self):
+
+        sys.stdout.write(GREEN)
+        print (self._current_iteration_index)
+        print((self.cell_matrix.coll_amount * self.cell_matrix.row_amount))      # not working and I don't know why
+        sys.stdout.write(RESET)
+
+        cell_to_compute = self.cell_matrix.get_cell_by_index(self._current_iteration_index)
+        cell_to_compute.compute_new_state(self._ruleset, self.cell_matrix)
+        cell_to_compute.is_higlighted = True
+
+        self._current_iteration_index += 1
+
+        # if current is last index restart
+        if (self._current_iteration_index >= self.cell_matrix.get_cells_count()):
+            self._current_iteration_index = 0
+            return True
+        
+    def update_cell_per_cell(self):
+
+        sys.stdout.write(YELLOW)
+        print (self._current_iteration_index)
+        sys.stdout.write(RESET)
+
+        cell_to_update = self.cell_matrix.get_cell_by_index(self._current_iteration_index)
+        cell_to_update.update_state()
+        cell_to_update.is_higlighted = True
+
+        self._current_iteration_index += 1
+
+        # if current is last index restart
+        if (self._current_iteration_index >= self.cell_matrix.get_cells_count()):
+            self._current_iteration_index = 0
+            return True
+
     def draw_cells(self, screen):
         sys.stdout.write(LIGHT_GREY)
         print ("DRAWING CELLS")

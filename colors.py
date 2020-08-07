@@ -5,7 +5,8 @@ Created on Tue Aug  4 13:15:33 2020
 @author: Daniel
 """
 
-from random import *
+from random import randrange
+
 
 # Colors used by sys.stdout.write
 

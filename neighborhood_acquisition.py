@@ -9,12 +9,13 @@ from colors import *
 from Game_Of_Life_Simulation import *
 from neighborhood_acquisition_algoritms import *
 
- class NeighborhoodAcquisition:
+class NeighborhoodAcquisition:
     
     @staticmethod
     def get_neighborhood(target_cell, cell_matrix, acquisition_algoritm):
-        print ("Select a type of neighborhood algorithm to operate with")
-
+        
+        # Select a type of neighborhood algorithm to operate with
+        
         # get the position of the target cell
         target_cell_x_pos = target_cell.get_position_on_grid()[0]     # x position
         target_cell_y_pos = target_cell.get_position_on_grid()[1]     # y position
@@ -38,13 +39,9 @@ from neighborhood_acquisition_algoritms import *
         # once the not valid positions are removed then get the cells with the targeted coordinates
         for position in neighbors_positions:
             #print (" The type is " + str(type(position)))
-            output_list.append( cell_matrix.get_cell(position[0], position[1]) )        # get the cells at those verified positions
+            selected_cell = cell_matrix.get_cell(position[0], position[1])
 
-        #sys.stdout.write(RED)
-        #print ("the only valid positions are: ")
-        #for position in neighbors_positions:
-        #    print(str(position))
-        #sys.stdout.write(RESET)
+            output_list.append( selected_cell )        # get the cells at those verified positions
 
         # if there is alist of cells to return then return them
         if len(output_list) != 0:
@@ -68,7 +65,14 @@ from neighborhood_acquisition_algoritms import *
         # once the not valid positions are removed then get the cells with the targeted coordinates
         for position in neighbors_positions:
             #print (" The type is " + str(type(position)))
-            output_list.append( cell_matrix.get_cell(position[0], position[1]) )        # get the cells at those verified positions
+            selected_cell = cell_matrix.get_cell(position[0], position[1])
+
+            # debug
+            # if (target_cell_x_pos == 2 and target_cell_y_pos == 2):
+            #     print ("HIGLIGHTING")
+            # selected_cell.is_higlighted = True
+
+            output_list.append( selected_cell )        # get the cells at those verified positions
         
         # if there is alist of cells to return then return them
         if len(output_list) != 0:

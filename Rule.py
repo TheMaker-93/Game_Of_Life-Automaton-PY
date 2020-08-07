@@ -43,6 +43,7 @@ class Rule:
         return self._name
 
     def check_rule(self, targeted_cell, cell_matrix):
+
         print ("Checking cell with index " + str(targeted_cell.cell_id))
 
         neighboring_cells = []
@@ -56,7 +57,7 @@ class Rule:
 
             # get the neighbors in the state we desire        
             for neighbor in neighboring_cells:
-                if neighbor.is_filled == self._selected_cell_neighbor_filled_state:
+                if bool(neighbor.is_filled) == self._selected_cell_neighbor_filled_state:
                     targeted_neighbors_cells.append(neighbor)
 
         # 3 Check the amount of neigbors
@@ -65,6 +66,7 @@ class Rule:
             return self._selected_cell_end_filled_state       
         # if the rule is not applicable then return the None object (default action)
          
+
         
 class Ruleset:
     
@@ -97,7 +99,7 @@ class Ruleset:
             #Once a rule has been applied then exit the loop
             # None is the default object returned by any function if no return is set
             # therefore, is the returned value is not null means that the function is returning something, then, the rule could be checked
-            print (str(new_state))
+            # print (str(new_state))
             
             if new_state != None:
                 print ("the new state should be: " + str(new_state)) 
