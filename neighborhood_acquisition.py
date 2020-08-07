@@ -11,69 +11,85 @@ from neighborhood_acquisition_algoritms import *
 
 class NeighborhoodAcquisition:
 
-    @staticmethod
+    returned_cells = []
+
+    @staticmethod   # Select a type of neighborhood algorithm to operate with
     def get_neighborhood(target_cell, cell_matrix, acquisition_algoritm):
         
-        # Select a type of neighborhood algorithm to operate with
+        output_list = []        # output list with the neighbors
+
+        if (NeighborhoodAcquisition.returned_cells != None):
+            for cell in NeighborhoodAcquisition.returned_cells:
+                cell.set_highlighted_state(False)
         
         # get the position of the target cell
         target_cell_x_pos = target_cell.get_position_on_grid()[0]     # x position
         target_cell_y_pos = target_cell.get_position_on_grid()[1]     # y position
 
+        neighbors_positions = []
         if acquisition_algoritm == NeighborhoodAcquisitionTypes.MOORE:
-            return NeighborhoodAcquisition._get_moore_neighborhood(target_cell_x_pos,target_cell_y_pos,cell_matrix)
+            neighbors_positions = NeighborhoodAcquisition._perform_moore_selection(target_cell_x_pos,target_cell_y_pos)
         else:
-            return NeighborhoodAcquisition._get_neumann_neighboorhood(target_cell_x_pos,target_cell_y_pos,cell_matrix)
+            neighbors_positions = NeighborhoodAcquisition._perform_neumann_selection(target_cell_x_pos,target_cell_y_pos)
 
-    @staticmethod
-    def _get_neumann_neighboorhood(target_cell_x_pos,target_cell_y_pos, cell_matrix):
+        # remove out of range positions
+        NeighborhoodAcquisition.remove_invalid_positions(neighbors_positions,cell_matrix)
+
+        # once the not valid positions are removed then get the cells with the targeted coordinates
+        output_list = NeighborhoodAcquisition._get_cells_from_positions(neighbors_positions,cell_matrix)
+        NeighborhoodAcquisition.returned_cells = output_list
+
+        # if there is alist of cells to return then return them
+        if len(output_list) != 0:
+            return output_list
+        else:
+            sys.stdout.write(RED)
+            print ("ERROR: No cell found to be returned")
+            sys.stdout.write(RESET)
+
+    # @staticmethod
+    # def _get_neumann_neighboorhood(target_cell_x_pos,target_cell_y_pos, cell_matrix):
         
-        output_list = []        # output list with the neighbors
+    #     output_list = []        # output list with the neighbors
 
-        # compute the teorical position of the neighbors 
-        neighbors_positions = []
-        neighbors_positions = NeighborhoodAcquisition._perform_neumann_selection(target_cell_x_pos,target_cell_y_pos)
+    #     # compute the teorical position of the neighbors 
+    #     neighbors_positions = []
+    #     neighbors_positions = NeighborhoodAcquisition._perform_neumann_selection(target_cell_x_pos,target_cell_y_pos)
 
-        NeighborhoodAcquisition.remove_invalid_positions(neighbors_positions,cell_matrix)
+    #     NeighborhoodAcquisition.remove_invalid_positions(neighbors_positions,cell_matrix)
 
-        # once the not valid positions are removed then get the cells with the targeted coordinates
-        for position in neighbors_positions:
-            #print (" The type is " + str(type(position)))
-            selected_cell = cell_matrix.get_cell(position[0], position[1])
-            output_list.append( selected_cell )        # get the cells at those verified positions
+    #     # once the not valid positions are removed then get the cells with the targeted coordinates
+    #     output_list = NeighborhoodAcquisition._get_cells_from_positions(neighbors_positions,cell_matrix)
 
-        # if there is alist of cells to return then return them
-        if len(output_list) != 0:
-            return output_list
-        else:
-            sys.stdout.write(RED)
-            print ("ERROR: No cell found to be returned")
-            sys.stdout.write(RESET)
+    #     # if there is alist of cells to return then return them
+    #     if len(output_list) != 0:
+    #         return output_list
+    #     else:
+    #         sys.stdout.write(RED)
+    #         print ("ERROR: No cell found to be returned")
+    #         sys.stdout.write(RESET)
 
-    @staticmethod
-    def _get_moore_neighborhood(target_cell_x_pos,target_cell_y_pos, cell_matrix):
+    # @staticmethod
+    # def _get_moore_neighborhood(target_cell_x_pos,target_cell_y_pos, cell_matrix):
 
-        output_list = []        # output list with the neighbors
+    #     output_list = []        # output list with the neighbors
 
-        # compute the teorical position of the neighbors 
-        neighbors_positions = []
-        neighbors_positions = NeighborhoodAcquisition._perform_moore_selection(target_cell_x_pos,target_cell_y_pos)
+    #     # compute the teorical position of the neighbors 
+    #     neighbors_positions = []
+    #     neighbors_positions = NeighborhoodAcquisition._perform_moore_selection(target_cell_x_pos,target_cell_y_pos)
 
-        NeighborhoodAcquisition.remove_invalid_positions(neighbors_positions,cell_matrix)
+    #     NeighborhoodAcquisition.remove_invalid_positions(neighbors_positions,cell_matrix)
 
-        # once the not valid positions are removed then get the cells with the targeted coordinates
-        for position in neighbors_positions:
-            #print (" The type is " + str(type(position)))
-            selected_cell = cell_matrix.get_cell(position[0], position[1])
-            output_list.append( selected_cell )        # get the cells at those verified positions
+    #     # once the not valid positions are removed then get the cells with the targeted coordinates
+    #     output_list = NeighborhoodAcquisition._get_cells_from_positions(neighbors_positions,cell_matrix)
 
-        # if there is alist of cells to return then return them
-        if len(output_list) != 0:
-            return output_list
-        else:
-            sys.stdout.write(RED)
-            print ("ERROR: No cell found to be returned")
-            sys.stdout.write(RESET)
+    #     # if there is alist of cells to return then return them
+    #     if len(output_list) != 0:
+    #         return output_list
+    #     else:
+    #         sys.stdout.write(RED)
+    #         print ("ERROR: No cell found to be returned")
+    #         sys.stdout.write(RESET)
 
     @staticmethod
     def _perform_moore_selection(target_cell_x_pos,target_cell_y_pos):
@@ -111,3 +127,14 @@ class NeighborhoodAcquisition:
             index += 1
 
         return positions_list
+
+    @staticmethod
+    def _get_cells_from_positions(positions_list, cell_matrix):
+
+        output_list = []
+
+        for position in positions_list:
+            selected_cell = cell_matrix.get_cell(position[0], position[1])
+            output_list.append( selected_cell )        # get the cells at those verified positions
+
+        return output_list

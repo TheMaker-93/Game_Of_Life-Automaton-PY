@@ -107,7 +107,7 @@ class BinaryCell(GridObject):
     _height = 0     # ""
     #_extreme
 
-    is_higlighted = False
+    _is_highlighted = False
 
     _cell_simulation_stage = CellSimulationStages.IDLE
 
@@ -134,7 +134,10 @@ class BinaryCell(GridObject):
         #     self.reset_visual_cues()
 
     def reset_visual_cues(self):
-        self.is_higlighted = False
+        self._is_highlighted = False
+
+    def set_highlighted_state(self, new_state):
+        self._is_highlighted = new_state
 
     def print_data (self):
         print ("The cell at: " + ''.join(str(self._position_on_grid))  + " is: ", end = '')        # tuple to string and int to string
@@ -175,7 +178,7 @@ class BinaryCell(GridObject):
             pygame.draw.rect(screen,(pygame.Color("white")), pygame.Rect(self._position_on_screen,(self._width, self._height)))
             pygame.draw.rect(screen,pygame.Color("black"), pygame.Rect(self._position_on_screen,(self._width, self._height)),1)
         
-        if self.is_higlighted:
+        if self._is_highlighted:
             pygame.draw.rect(screen,(pygame.Color("orange")), pygame.Rect(self._position_on_screen ,(self._width*0.8, self._height*0.8)))       # square
 
         if self._cell_simulation_stage != CellSimulationStages.IDLE:
@@ -294,7 +297,7 @@ class GameOfLifeSimulation:
         
         cell_to_compute.compute_new_state(self._ruleset, self.cell_matrix)
         
-        # cell_to_compute.is_higlighted = True
+        # cell_to_compute._is_highlighted = True
 
         self._current_iteration_index += 1
 
@@ -321,7 +324,7 @@ class GameOfLifeSimulation:
         
         cell_to_update.update_state()
         
-        #cell_to_update.is_higlighted = True
+        #cell_to_update._is_highlighted = True
         self._current_iteration_index += 1
 
         # if current is last index restart
