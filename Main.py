@@ -28,7 +28,7 @@ SCREEN_TITLE = "Game_Of_Life"
 SCREEN_SIZE_MULTIPLIER = (1,1)
 SCREEN_COMPUTED_SIZE = (int(SCREEN_BASE_SIZE[0] * SCREEN_SIZE_MULTIPLIER[0]) ,int(SCREEN_BASE_SIZE[1] * SCREEN_SIZE_MULTIPLIER[1]))
 clock = pygame.time.Clock()
-TICK_RATE = 60
+TICK_RATE = 5
 is_simulation_over = False
 
 # create the new window
@@ -38,8 +38,8 @@ pygame.display.set_caption(SCREEN_TITLE)
 
 # EXECUTION --------------------------------------------------------------------------------------------------------------------- #
     
-ROW_AMOUNT = 60
-COLL_AMOUNT = 60
+ROW_AMOUNT = 6
+COLL_AMOUNT = 6
 
 # CREATE THE RULES -------------------------------------------------------------------------------------------------------------- #
 

@@ -42,20 +42,16 @@ class Rule:
     def get_rule_name(self):
         return self._name
 
-    def check_rule(self, targeted_cell, cell_matrix):
+    def check_rule(self, targeted_cell, cell_matrix,neighboring_cells):
 
         print ("Checking cell with index " + str(targeted_cell.cell_id))
 
-        neighboring_cells = []
         targeted_neighbors_cells = []
 
-        # 1 Check if the targeted cell is on the desired state
+        # 1 Check if the targeted cell is on the desired state ( is this rule for this cell¿)
         if targeted_cell.is_filled == self._selected_cell_filled_state:
 
-            # 2 Then check the state and amount of neighbors
-            neighboring_cells = NeighborhoodAcquisition.get_neighborhood(targeted_cell,cell_matrix,NeighborhoodAcquisitionTypes.MOORE)
-
-            # get the neighbors in the state we desire        
+            # get the neighbors in the state we desire       
             for neighbor in neighboring_cells:
                 if bool(neighbor.is_filled) == self._selected_cell_neighbor_filled_state:
                     targeted_neighbors_cells.append(neighbor)
@@ -86,14 +82,15 @@ class Ruleset:
         sys.stdout.write(RESET)
         
     def check_rules(self,cell, hosting_cell_matrix):
-
-        # get the filled state of the cell
-        is_target_cell_filled = cell.is_filled
         
+        # 1 Then check the state and amount of neighbors
+        neighboring_cells = NeighborhoodAcquisition.get_neighborhood(cell,hosting_cell_matrix,NeighborhoodAcquisitionTypes.MOORE)
+
         for rule in self._rules:
                       
             sys.stdout.write(RED + BOLD)
-            new_state = rule.check_rule(cell,hosting_cell_matrix)
+            print ("Checking rule: " + rule.get_rule_name())
+            new_state = rule.check_rule(cell,hosting_cell_matrix,neighboring_cells)
             sys.stdout.write(RESET)
 
             #Once a rule has been applied then exit the loop
@@ -102,11 +99,13 @@ class Ruleset:
             # print (str(new_state))
             
             if new_state != None:
+                sys.stdout.write(GREEN)
                 print ("the new state should be: " + str(new_state)) 
+                sys.stdout.write(RESET)
                 return new_state
             # else
                 # continue with the iteration over the rules
 
         # if no rule could be applied then just return the same value of the cell passed as input
-        return is_target_cell_filled
+        return cell.is_filled
             

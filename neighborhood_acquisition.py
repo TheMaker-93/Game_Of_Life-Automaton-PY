@@ -32,12 +32,31 @@ class NeighborhoodAcquisition:
         else:
             neighbors_positions = NeighborhoodAcquisition._perform_neumann_selection(target_cell_x_pos,target_cell_y_pos)
 
+        # debug ---------------------------------------------------
+        sys.stdout.write(YELLOW)
+        print ("For the cell at position " + str(target_cell_x_pos) + " " + str(target_cell_y_pos) + " you are targeting: ", end = '')
+        sys.stdout.write(BLUE)
+        for position in neighbors_positions:
+            print ("\t x: " + str(position[0]) + "\t y: " + str(position[1]))
+        sys.stdout.write(RESET)
+
+        # hasta aqui correcto
+
         # remove out of range positions
-        NeighborhoodAcquisition.remove_invalid_positions(neighbors_positions,cell_matrix)
+        NeighborhoodAcquisition.remove_out_of_bounds_positions(neighbors_positions,cell_matrix)
+
+        sys.stdout.write(GREEN)
+        print ("For the cell at position AND AFTER CLEAN UP" + str(target_cell_x_pos) + " " + str(target_cell_y_pos) + " you are targeting: \n", end = '')
+        for position in neighbors_positions:
+            print ("\t x: " + str(position[0]) + "\t y: " + str(position[1]))
+        sys.stdout.write(RESET)
 
         # once the not valid positions are removed then get the cells with the targeted coordinates
         output_list = NeighborhoodAcquisition._get_cells_from_positions(neighbors_positions,cell_matrix)
         NeighborhoodAcquisition.returned_cells = output_list
+
+        for cell in output_list:
+            cell.set_highlighted_state(True)
 
         # if there is alist of cells to return then return them
         if len(output_list) != 0:
@@ -46,50 +65,6 @@ class NeighborhoodAcquisition:
             sys.stdout.write(RED)
             print ("ERROR: No cell found to be returned")
             sys.stdout.write(RESET)
-
-    # @staticmethod
-    # def _get_neumann_neighboorhood(target_cell_x_pos,target_cell_y_pos, cell_matrix):
-        
-    #     output_list = []        # output list with the neighbors
-
-    #     # compute the teorical position of the neighbors 
-    #     neighbors_positions = []
-    #     neighbors_positions = NeighborhoodAcquisition._perform_neumann_selection(target_cell_x_pos,target_cell_y_pos)
-
-    #     NeighborhoodAcquisition.remove_invalid_positions(neighbors_positions,cell_matrix)
-
-    #     # once the not valid positions are removed then get the cells with the targeted coordinates
-    #     output_list = NeighborhoodAcquisition._get_cells_from_positions(neighbors_positions,cell_matrix)
-
-    #     # if there is alist of cells to return then return them
-    #     if len(output_list) != 0:
-    #         return output_list
-    #     else:
-    #         sys.stdout.write(RED)
-    #         print ("ERROR: No cell found to be returned")
-    #         sys.stdout.write(RESET)
-
-    # @staticmethod
-    # def _get_moore_neighborhood(target_cell_x_pos,target_cell_y_pos, cell_matrix):
-
-    #     output_list = []        # output list with the neighbors
-
-    #     # compute the teorical position of the neighbors 
-    #     neighbors_positions = []
-    #     neighbors_positions = NeighborhoodAcquisition._perform_moore_selection(target_cell_x_pos,target_cell_y_pos)
-
-    #     NeighborhoodAcquisition.remove_invalid_positions(neighbors_positions,cell_matrix)
-
-    #     # once the not valid positions are removed then get the cells with the targeted coordinates
-    #     output_list = NeighborhoodAcquisition._get_cells_from_positions(neighbors_positions,cell_matrix)
-
-    #     # if there is alist of cells to return then return them
-    #     if len(output_list) != 0:
-    #         return output_list
-    #     else:
-    #         sys.stdout.write(RED)
-    #         print ("ERROR: No cell found to be returned")
-    #         sys.stdout.write(RESET)
 
     @staticmethod
     def _perform_moore_selection(target_cell_x_pos,target_cell_y_pos):
@@ -117,11 +92,15 @@ class NeighborhoodAcquisition:
         return neighbors_positions
     
     @staticmethod
-    def remove_invalid_positions(positions_list, cell_matrix):
+    def remove_out_of_bounds_positions(positions_list, cell_matrix):
         
         index =  0
         for potential_position in positions_list:
-            if cell_matrix.check_if_position_inside_matrix(potential_position[0],potential_position[1]):
+            if cell_matrix.check_if_position_inside_matrix(potential_position[0],potential_position[1]) == False:
+                
+                sys.stdout.write(RED)
+                print ("\tRemoving position: " + str(potential_position))
+
                 positions_list.pop(index)
             
             index += 1

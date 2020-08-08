@@ -16,8 +16,8 @@ class CellMatrix:
     origin_position = ()
     extreme_position = ()
     
-    coll_amount = 0
-    row_amount = 0
+    coll_amount = -1
+    row_amount = -1
     
     _list_Of_Cells = []      # list with all the binary cells of the system
 
@@ -69,11 +69,25 @@ class CellMatrix:
         self._list_Of_Cells.append(cell_object)
 
     def check_if_cell_inside_matrix(self,cell_object):
+        
         object_position = (cell_object.get_position_on_grid())
-        return self.check_if_position_inside_matrix(object_position[0], object_position[1])
+        inside = self.check_if_position_inside_matrix(object_position[0], object_position[1])
+
+        return inside
+
 
     def check_if_position_inside_matrix(self,x_pos,y_pos):
-        if ((x_pos < 0) or (x_pos >= self.coll_amount)) or ((y_pos < 0) or (y_pos >= self.row_amount)):
+        
+        # sys.stdout.write(RED)
+        # print ("\t x: " + str(x_pos) + "\t y: " + str(y_pos), end = '' )
+        
+        print ("COLLS: " + str(self.coll_amount) + " " + "ROWS: " + str(self.row_amount))
+
+        if x_pos < 0 or x_pos > self.coll_amount:
+            return False
+        elif y_pos < 0 or y_pos > self.row_amount:
+            return False
+        else:
             return True
         
 class GridObject:
@@ -206,9 +220,9 @@ class GameOfLifeSimulation:
     _current_cell_being_updated = None
     
     def __init__(self,coll_amount, row_amount, screen_width, screen_height, ruleset):
-        
+
         # create the matrix    
-        cell_matrix = CellMatrix((0,0), (100,100), row_amount, coll_amount)
+        self.cell_matrix = CellMatrix((0,0), (100,100), row_amount, coll_amount)
         
         # add the ruleset
         self._ruleset = ruleset
@@ -239,13 +253,13 @@ class GameOfLifeSimulation:
                 cell_instance = BinaryCell(start_filled,(x_position,y_position),(coll,row),width, height, row * coll_amount + coll)          # create a new cell
                 # ------------------------------------------------------------------------------------------ #
 
-                cell_matrix.add_cell(cell_instance)              # add the cell to the list
+                self.cell_matrix.add_cell(cell_instance)              # add the cell to the list
                 cell_instance.print_data()
         
         # check
         sys.stdout.write(RESET)
         print()
-        print ("The amount of cells on the matrix is: " + str(cell_matrix.get_cells_count()))
+        print ("The amount of cells on the matrix is: " + str(self.cell_matrix.get_cells_count()))
     
     # Update the state of the cells
     def update_cells(self):     
