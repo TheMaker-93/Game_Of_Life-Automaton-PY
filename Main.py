@@ -41,6 +41,7 @@ pygame.display.set_caption(SCREEN_TITLE)
     
 ROW_AMOUNT = 48
 COLL_AMOUNT = 48
+MATRIX_INITIALIZATION_SEED = 0
 
 # CREATE THE RULES -------------------------------------------------------------------------------------------------------------- #
 
@@ -59,6 +60,7 @@ sys.stdout.write(RESET)             # RESET the color of the text
 
 # CREATE SIMULATION ------------------------------------------------------------------------------------------------------------- #
 sys.stdout.write(BLUE)
+seed(MATRIX_INITIALIZATION_SEED)                  # set the seed for the random initialization
 game_of_life = GameOfLifeSimulation(COLL_AMOUNT, ROW_AMOUNT,SCREEN_COMPUTED_SIZE[0],SCREEN_COMPUTED_SIZE[1],game_of_life_ruleset)
 
 sys.stdout.write(YELLOW + BOLD)     # set the color of the text
