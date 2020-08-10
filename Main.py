@@ -13,6 +13,7 @@ import pygame
 
 from Game_Of_Life_Simulation import *
 from Rule import *
+from random import seed
 
 # from enum import Enum
 from Simulation_States import *
