@@ -54,6 +54,7 @@ class CellMatrix:
             cell.print_data()
 
     def get_cell_by_index(self, index):
+        print ("Getting cell with index " + str(index))
         return self._list_Of_Cells[index]
 
     def get_cell(self,x_pos,y_pos):
@@ -61,10 +62,14 @@ class CellMatrix:
         # id = self.coll_amount * x_pos + y_pos          BAD
         
         # Id = Current Row * Matrix Width + Current Coll
-        id = y_pos * self.coll_amount + x_pos
+        id = self.get_cell_index(x_pos,y_pos)
+
         print ("with x position being: " + str(x_pos) + " and y position: " + str(y_pos) + " the resulting id is" +str(id))
         return self.get_cell_by_index(id)
     
+    def get_cell_index(self,x_pos,y_pos):
+        return y_pos * self.coll_amount + x_pos
+
     def add_cell(self,cell_object):
         self._list_Of_Cells.append(cell_object)
 
@@ -83,9 +88,7 @@ class CellMatrix:
         
         print ("COLLS: " + str(self.coll_amount) + " " + "ROWS: " + str(self.row_amount))
 
-        if x_pos < 0 or x_pos > self.coll_amount:
-            return False
-        elif y_pos < 0 or y_pos > self.row_amount:
+        if (x_pos < 0 or x_pos >= self.coll_amount) or (y_pos < 0 or y_pos >= self.row_amount):
             return False
         else:
             return True

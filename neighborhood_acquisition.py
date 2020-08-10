@@ -35,12 +35,9 @@ class NeighborhoodAcquisition:
         # debug ---------------------------------------------------
         sys.stdout.write(YELLOW)
         print ("For the cell at position " + str(target_cell_x_pos) + " " + str(target_cell_y_pos) + " you are targeting: ", end = '')
-        sys.stdout.write(BLUE)
         for position in neighbors_positions:
             print ("\t x: " + str(position[0]) + "\t y: " + str(position[1]))
         sys.stdout.write(RESET)
-
-        # hasta aqui correcto
 
         # remove out of range positions
         NeighborhoodAcquisition.remove_out_of_bounds_positions(neighbors_positions,cell_matrix)
@@ -53,9 +50,10 @@ class NeighborhoodAcquisition:
 
         # once the not valid positions are removed then get the cells with the targeted coordinates
         output_list = NeighborhoodAcquisition._get_cells_from_positions(neighbors_positions,cell_matrix)
+        
         NeighborhoodAcquisition.returned_cells = output_list
-
         for cell in output_list:
+            print ("Cell output positions \t" + str(cell.get_position_on_grid()))
             cell.set_highlighted_state(True)
 
         # if there is alist of cells to return then return them
@@ -94,16 +92,29 @@ class NeighborhoodAcquisition:
     @staticmethod
     def remove_out_of_bounds_positions(positions_list, cell_matrix):
         
+        positions_to_remove = []
+
         index =  0
         for potential_position in positions_list:
+
             if cell_matrix.check_if_position_inside_matrix(potential_position[0],potential_position[1]) == False:
                 
                 sys.stdout.write(RED)
                 print ("\tRemoving position: " + str(potential_position))
+                sys.stdout.write(RESET)
 
-                positions_list.pop(index)
+                # Get the not valid positions
+                positions_to_remove.append(potential_position)
             
             index += 1
+
+        # once knonwn the position not valid then remove them
+        for position_to_remove in positions_to_remove:
+            positions_list.remove(position_to_remove)
+
+        # for removal_index in indexes_to_remove:
+        #     print ("Index to remove: " + str(removal_index) + " from leng: " + str(len(positions_list)))
+        #     positions_list.pop(removal_index)
 
         return positions_list
 
