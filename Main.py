@@ -6,6 +6,7 @@ Created on Tue Aug  4 12:50:20 2020
 """
 
 import sys
+from Cell_State import CellState
 from colors import *
 
 import pygame
@@ -28,7 +29,7 @@ SCREEN_TITLE = "Game_Of_Life"
 SCREEN_SIZE_MULTIPLIER = (1,1)
 SCREEN_COMPUTED_SIZE = (int(SCREEN_BASE_SIZE[0] * SCREEN_SIZE_MULTIPLIER[0]) ,int(SCREEN_BASE_SIZE[1] * SCREEN_SIZE_MULTIPLIER[1]))
 clock = pygame.time.Clock()
-TICK_RATE = 60
+TICK_RATE = 1000
 is_simulation_over = False
 
 # create the new window
@@ -38,16 +39,16 @@ pygame.display.set_caption(SCREEN_TITLE)
 
 # EXECUTION --------------------------------------------------------------------------------------------------------------------- #
     
-ROW_AMOUNT = 20
-COLL_AMOUNT = 20
+ROW_AMOUNT = 48
+COLL_AMOUNT = 48
 
 # CREATE THE RULES -------------------------------------------------------------------------------------------------------------- #
 
 simulation_rules = []
-simulation_rules.append(Rule("Death by underpopulation",True,True,0,1,False))
-simulation_rules.append(Rule("sustainable life",True,True,2,3,True))
-simulation_rules.append(Rule("Death by overpopulation",True,True,4,8,False))     # -1 == infinito a la hora de comprobarlo
-simulation_rules.append(Rule("Birth",False,True,3,3,True))
+simulation_rules.append(Rule("Death by underpopulation",CellState.FILLED,CellState.FILLED,0,1,CellState.EMTPY))
+simulation_rules.append(Rule("sustainable life",CellState.FILLED,CellState.FILLED,2,3,CellState.FILLED))
+simulation_rules.append(Rule("Death by overpopulation",CellState.FILLED,CellState.FILLED,4,8,CellState.EMTPY))     # -1 == infinito a la hora de comprobarlo
+simulation_rules.append(Rule("Birth",CellState.EMTPY,CellState.FILLED,3,3,CellState.FILLED))
 
 game_of_life_ruleset = Ruleset(simulation_rules)
 

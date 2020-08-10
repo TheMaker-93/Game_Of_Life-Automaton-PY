@@ -6,6 +6,7 @@ Created on Tue Aug  4 12:55:40 2020
 """
 import pygame
 import sys
+from Cell_State import CellState
 from colors import *
 from Rule import *
 from random import randint
@@ -54,7 +55,7 @@ class CellMatrix:
             cell.print_data()
 
     def get_cell_by_index(self, index):
-        print ("Getting cell with index " + str(index))
+        # print ("Getting cell with index " + str(index))
         return self._list_Of_Cells[index]
 
     def get_cell(self,x_pos,y_pos):
@@ -63,8 +64,7 @@ class CellMatrix:
         
         # Id = Current Row * Matrix Width + Current Coll
         id = self.get_cell_index(x_pos,y_pos)
-
-        print ("with x position being: " + str(x_pos) + " and y position: " + str(y_pos) + " the resulting id is" +str(id))
+        # print ("with x position being: " + str(x_pos) + " and y position: " + str(y_pos) + " the resulting id is" +str(id))
         return self.get_cell_by_index(id)
     
     def get_cell_index(self,x_pos,y_pos):
@@ -86,7 +86,7 @@ class CellMatrix:
         # sys.stdout.write(RED)
         # print ("\t x: " + str(x_pos) + "\t y: " + str(y_pos), end = '' )
         
-        print ("COLLS: " + str(self.coll_amount) + " " + "ROWS: " + str(self.row_amount))
+        # print ("COLLS: " + str(self.coll_amount) + " " + "ROWS: " + str(self.row_amount))
 
         if (x_pos < 0 or x_pos >= self.coll_amount) or (y_pos < 0 or y_pos >= self.row_amount):
             return False
@@ -114,8 +114,11 @@ class BinaryCell(GridObject):
     
     cell_id = 0
     
-    is_filled = False       # is the cell filled? == CELL STATE
-    next_filled_state = False   # for now the cell holds the new state it will implement once the computations are done (at the update phase)
+    state = CellState.NOT_DEFINED
+    next_state = CellState.NOT_DEFINED
+
+    # is_filled = False       # is the cell filled? == CELL STATE
+    # next_filled_state = False   # for now the cell holds the new state it will implement once the computations are done (at the update phase)
     
     under_Update = False    # is the cell being updated?
     under_Compute = False   # is the cell being computed?
@@ -128,7 +131,7 @@ class BinaryCell(GridObject):
 
     _cell_simulation_stage = CellSimulationStages.IDLE
 
-    def __init__ (self, start_Filled, screen_position, grid_position, width, height, cell_id):
+    def __init__ (self, start_cell_state, screen_position, grid_position, width, height, cell_id):
         super().__init__(screen_position, grid_position)
         
         self.cell_id = cell_id
@@ -137,7 +140,8 @@ class BinaryCell(GridObject):
         self._height = height
         
         # _extreme = grid_Position + (width,height)    
-        self.is_filled = start_Filled
+        # self.is_filled = start_cell_state
+        self.state = start_cell_state
         
     def set_cell_simulation_stage(self, new_simulation_stage):
 
@@ -159,11 +163,11 @@ class BinaryCell(GridObject):
     def print_data (self):
         print ("The cell at: " + ''.join(str(self._position_on_grid))  + " is: ", end = '')        # tuple to string and int to string
         
-        if self.is_filled == True:
+        if self.state == CellState.FILLED:
             sys.stdout.write(GREEN)
             print ("\tFILLED")
             sys.stdout.write(RESET)
-        else: 
+        elif self.state == CellState.EMTPY: 
             sys.stdout.write(RED)
             print ("\tNOT FILLED")
             sys.stdout.write(RESET)
@@ -173,28 +177,29 @@ class BinaryCell(GridObject):
         
         self.set_cell_simulation_stage(CellSimulationStages.COMPUTING)
 
-        new_state = ruleset.check_rules(self, hosting_cell_matrix)
-        
-        self.next_filled_state = new_state
+        self.next_state = ruleset.check_rules(self, hosting_cell_matrix)
         # self.is_filled = new_state
         # self.is_filled = not self.is_filled      # change the state to the inverse
       
     def update_state(self):
-        print ("changing cell state from " + str(self.is_filled) + " to " + str(self.next_filled_state))
+        print ("changing cell state from " + str(self.state.name) + " to " + str(self.next_state.name))
         
         self.set_cell_simulation_stage(CellSimulationStages.UPDATING)
         
-        self.is_filled = self.next_filled_state     # update the state with the computed one
+        # self.is_filled = self.next_filled_state     # update the state with the computed one
+        self.state = self.next_state
         # print ("UPDATING STATE " + str(self.cell_id))
         
     def draw(self,screen):
 
-        if self.is_filled:
+        if self.state == CellState.FILLED:
             pygame.draw.rect(screen,(pygame.Color("black")), pygame.Rect(self._position_on_screen,(self._width, self._height)))       # square
-        else:
+        elif self.state == CellState.EMTPY:
             pygame.draw.rect(screen,(pygame.Color("white")), pygame.Rect(self._position_on_screen,(self._width, self._height)))
             pygame.draw.rect(screen,pygame.Color("black"), pygame.Rect(self._position_on_screen,(self._width, self._height)),1)
-        
+        elif self.state == CellState.NOT_DEFINED:
+            pygame.draw.rect(screen,(pygame.Color("red")), pygame.Rect(self._position_on_screen,(self._width, self._height)))       # square
+
         if self._is_highlighted:
             pygame.draw.rect(screen,(pygame.Color("orange")), pygame.Rect(self._position_on_screen ,(self._width*0.8, self._height*0.8)))       # square
 
@@ -241,19 +246,11 @@ class GameOfLifeSimulation:
                 
                 x_position = (coll / (coll_amount-1)) + width * coll
                 y_position = (row / (row_amount-1)) + height * row
-                
-                # y_position = (coll / (coll_amount-1)) + width * coll
-                # x_position = (row / (row_amount-1)) + height * row
 
-                #start_filled = (coll + row) % 2
-                # start_filled = bool((coll + row) % 3)
-                # start_filled = True
-                start_filled = bool(randint(0,1))
+                start_cell_state = CellState(randint(0,1))
                 
-                # Id = Current Row * Matrix Width + Current Coll
-
                 # ------------------------------------------------------------------------------------------ #
-                cell_instance = BinaryCell(start_filled,(x_position,y_position),(coll,row),width, height, row * coll_amount + coll)          # create a new cell
+                cell_instance = BinaryCell(start_cell_state,(x_position,y_position),(coll,row),width, height, row * coll_amount + coll)          # create a new cell
                 # ------------------------------------------------------------------------------------------ #
 
                 self.cell_matrix.add_cell(cell_instance)              # add the cell to the list
@@ -304,10 +301,10 @@ class GameOfLifeSimulation:
         if (self._current_cell_being_computed != None):
             self._current_cell_being_computed.set_cell_simulation_stage(CellSimulationStages.IDLE)
 
-        sys.stdout.write(GREEN)
-        print (self._current_iteration_index)
-        #print((self.cell_matrix.coll_amount * self.cell_matrix.row_amount))      # not working and I don't know why
-        sys.stdout.write(RESET)
+        # sys.stdout.write(GREEN)
+        # print (self._current_iteration_index)
+        # #print((self.cell_matrix.coll_amount * self.cell_matrix.row_amount))      # not working and I don't know why
+        # sys.stdout.write(RESET)
 
         cell_to_compute = self.cell_matrix.get_cell_by_index(self._current_iteration_index)
         self._current_cell_being_computed = cell_to_compute

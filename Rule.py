@@ -6,6 +6,7 @@ Created on Tue Aug  4 13:20:17 2020
 """
 
 import sys
+from Cell_State import CellState
 from neighborhood_acquisition import *
 from colors import *
 from neighborhood_acquisition_algoritms import *
@@ -14,25 +15,25 @@ class Rule:
     
     _name = "not_named"
     
-    _selected_cell_filled_state = False
+    _selected_cell_state = CellState.NOT_DEFINED
     
-    _selected_cell_neighbor_filled_state = False
+    _selected_cell_neighbor_state = CellState.NOT_DEFINED
     _neighbor_min_amount = -1
     _neighbor_max_amount = -1
     
-    _selected_cell_end_filled_state = False
+    _selected_cell_end_state = CellState.NOT_DEFINED
     
-    def __init__(self,name ,targeted_cell_filled_state,neighbor_cell_filled_state, neighbor_min_amount,neighbor_max_amount, targeted_cell_end_filled_state):
+    def __init__(self,name ,targeted_cell_state,neighbor_cell_state, neighbor_min_amount,neighbor_max_amount, targeted_cell_end_state):
         
         self._name = name
         
-        self._selected_cell_filled_state = targeted_cell_filled_state
+        self._selected_cell_state = targeted_cell_state
         
-        self._selected_cell_neighbor_filled_state = neighbor_cell_filled_state
+        self._selected_cell_neighbor_state = neighbor_cell_state
         self._neighbor_min_amount = neighbor_min_amount
         self._neighbor_max_amount = neighbor_max_amount
         
-        self._selected_cell_end_filled_state = targeted_cell_end_filled_state
+        self._selected_cell_end_state = targeted_cell_end_state
         
         sys.stdout.write(GREEN)
         print ("Rule " + str(self._name) + "has been succesfully created" )
@@ -49,18 +50,22 @@ class Rule:
         targeted_neighbors_cells = []
 
         # 1 Check if the targeted cell is on the desired state ( is this rule for this cell¿)
-        if targeted_cell.is_filled == self._selected_cell_filled_state:
+        if targeted_cell.state == self._selected_cell_state:
 
             # get the neighbors in the state we desire       
             for neighbor in neighboring_cells:
-                if bool(neighbor.is_filled) == self._selected_cell_neighbor_filled_state:
+                if neighbor.state == self._selected_cell_neighbor_state:
                     targeted_neighbors_cells.append(neighbor)
 
-        # 3 Check the amount of neigbors
-        targeted_neighbors_count = len(targeted_neighbors_cells)
-        if (targeted_neighbors_count >= self._neighbor_min_amount) and (targeted_neighbors_count <= self._neighbor_max_amount):
-            return self._selected_cell_end_filled_state       
+            # 3 Check the amount of neigbors
+            targeted_neighbors_count = len(targeted_neighbors_cells)
+            if (targeted_neighbors_count >= self._neighbor_min_amount) and (targeted_neighbors_count <= self._neighbor_max_amount):
+                return self._selected_cell_end_state    
+            else:
+                return None
+            
         # if the rule is not applicable then return the None object (default action)
+        return None
          
 
         
@@ -88,10 +93,10 @@ class Ruleset:
 
         for rule in self._rules:
                       
-            sys.stdout.write(RED + BOLD)
-            print ("Checking rule: " + rule.get_rule_name())
+            # sys.stdout.write(RED + BOLD)
+            # print ("Checking rule: " + rule.get_rule_name())
             new_state = rule.check_rule(cell,hosting_cell_matrix,neighboring_cells)
-            sys.stdout.write(RESET)
+            # sys.stdout.write(RESET)
 
             #Once a rule has been applied then exit the loop
             # None is the default object returned by any function if no return is set
@@ -107,5 +112,7 @@ class Ruleset:
                 # continue with the iteration over the rules
 
         # if no rule could be applied then just return the same value of the cell passed as input
-        return cell.is_filled
+        sys.stderr.write(YELLOW)
+        print ("No rule could be applyed so the state will not be changing for the cell with id: " + str(cell.cell_id))
+        return cell.state
             

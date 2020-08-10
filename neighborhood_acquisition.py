@@ -52,9 +52,9 @@ class NeighborhoodAcquisition:
         output_list = NeighborhoodAcquisition._get_cells_from_positions(neighbors_positions,cell_matrix)
         
         NeighborhoodAcquisition.returned_cells = output_list
-        for cell in output_list:
-            print ("Cell output positions \t" + str(cell.get_position_on_grid()))
-            cell.set_highlighted_state(True)
+        # for cell in output_list:
+        #     print ("Cell output positions \t" + str(cell.get_position_on_grid()))
+        #     cell.set_highlighted_state(True)
 
         # if there is alist of cells to return then return them
         if len(output_list) != 0:
