@@ -7,16 +7,18 @@ Created on Tue Aug  4 12:50:20 2020
 
 import sys
 from Cell_State import CellState
-from colors import *
+from colors import ConsoleColor
+from colors import get_random_color
 
 import pygame
 
-from Game_Of_Life_Simulation import *
-from Rule import *
+from Game_Of_Life_Simulation import GameOfLifeSimulation
+from Rule import Rule
+from Rule import Ruleset
 from random import seed
 
 # from enum import Enum
-from Simulation_States import *
+from Simulation_States import SimulationStates
 
 
 # START PYGAME ------------------------------------------------------------------------------------------------------------------ #
@@ -25,7 +27,7 @@ from Simulation_States import *
 
 pygame.init()           # INITIALIZE ENGINE
 
-SCREEN_BASE_SIZE = (860,860)
+SCREEN_BASE_SIZE = (920,920)
 SCREEN_TITLE = "Game_Of_Life"
 SCREEN_SIZE_MULTIPLIER = (1,1)
 SCREEN_COMPUTED_SIZE = (int(SCREEN_BASE_SIZE[0] * SCREEN_SIZE_MULTIPLIER[0]) ,int(SCREEN_BASE_SIZE[1] * SCREEN_SIZE_MULTIPLIER[1]))
@@ -40,8 +42,8 @@ pygame.display.set_caption(SCREEN_TITLE)
 
 # EXECUTION --------------------------------------------------------------------------------------------------------------------- #
     
-ROW_AMOUNT = 48
-COLL_AMOUNT = 48
+ROW_AMOUNT = 120
+COLL_AMOUNT = 120
 MATRIX_INITIALIZATION_SEED = 0
 
 # CREATE THE RULES -------------------------------------------------------------------------------------------------------------- #
@@ -54,19 +56,19 @@ simulation_rules.append(Rule("Birth",CellState.EMTPY,CellState.FILLED,3,3,CellSt
 
 game_of_life_ruleset = Ruleset(simulation_rules)
 
-sys.stdout.write(YELLOW + BOLD)     # set the color of the text
+sys.stdout.write(ConsoleColor.YELLOW + ConsoleColor.BOLD)     # set the color of the text
 print ("\t Ruleset configured succesfully")
-sys.stdout.write(RESET)             # RESET the color of the text
+sys.stdout.write(ConsoleColor.RESET)             # RESET the color of the text
 
 
 # CREATE SIMULATION ------------------------------------------------------------------------------------------------------------- #
-sys.stdout.write(BLUE)
+sys.stdout.write(ConsoleColor.BLUE)
 seed(MATRIX_INITIALIZATION_SEED)                  # set the seed for the random initialization
 game_of_life = GameOfLifeSimulation(COLL_AMOUNT, ROW_AMOUNT,SCREEN_COMPUTED_SIZE[0],SCREEN_COMPUTED_SIZE[1],game_of_life_ruleset)
 
-sys.stdout.write(YELLOW + BOLD)     # set the color of the text
+sys.stdout.write(ConsoleColor.YELLOW + ConsoleColor.BOLD)     # set the color of the text
 print ("\t Setup performed succesfully")
-sys.stdout.write(RESET)             # RESET the color of the text
+sys.stdout.write(ConsoleColor.RESET)             # RESET the color of the text
 
 
 # # MAIN SYSTEM LOOP -------------------------------------------------------------------------------------------------------------

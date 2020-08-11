@@ -7,9 +7,9 @@ Created on Tue Aug  4 13:20:17 2020
 
 import sys
 from Cell_State import CellState
-from neighborhood_acquisition import *
+from neighborhood_acquisition import NeighborhoodAcquisition
 from colors import *
-from neighborhood_acquisition_algoritms import *
+from neighborhood_acquisition_algoritms import NeighborhoodAcquisitionTypes
 
 class Rule:
     
@@ -35,9 +35,9 @@ class Rule:
         
         self._selected_cell_end_state = targeted_cell_end_state
         
-        sys.stdout.write(GREEN)
+        sys.stdout.write(ConsoleColor.GREEN)
         print ("Rule " + str(self._name) + "has been succesfully created" )
-        sys.stdout.write(RESET)
+        sys.stdout.write(ConsoleColor.RESET)
 
 
     def get_rule_name(self):
@@ -82,9 +82,9 @@ class Ruleset:
         
         self._rules.append(rule)
         
-        sys.stdout.write(GREEN)
+        sys.stdout.write(ConsoleColor.GREEN)
         print("The rule " + str(rule.get_rule_name()) + " has been added to the ruleset")
-        sys.stdout.write(RESET)
+        sys.stdout.write(ConsoleColor.RESET)
         
     def check_rules(self,cell, hosting_cell_matrix):
         
@@ -104,15 +104,17 @@ class Ruleset:
             # print (str(new_state))
             
             if new_state != None:
-                sys.stdout.write(GREEN)
+                sys.stdout.write(ConsoleColor.GREEN)
                 print ("the new state should be: " + str(new_state)) 
-                sys.stdout.write(RESET)
+                sys.stdout.write(ConsoleColor.RESET)
                 return new_state
             # else
                 # continue with the iteration over the rules
 
         # if no rule could be applied then just return the same value of the cell passed as input
-        sys.stderr.write(YELLOW)
+        sys.stderr.write(ConsoleColor.YELLOW)
         print ("No rule could be applyed so the state will not be changing for the cell with id: " + str(cell.cell_id))
+        sys.stdout.write(ConsoleColor.RESET)
+        
         return cell.state
             

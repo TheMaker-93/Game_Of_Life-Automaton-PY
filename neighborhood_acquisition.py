@@ -5,9 +5,10 @@ Created on Wed Aug  5 12:13:29 2020
 @author: Daniel
 """
 
-from colors import * 
-from Game_Of_Life_Simulation import *
-from neighborhood_acquisition_algoritms import *
+from colors import ConsoleColor
+import sys
+# from Game_Of_Life_Simulation import *
+from neighborhood_acquisition_algoritms import NeighborhoodAcquisitionTypes
 
 class NeighborhoodAcquisition:
 
@@ -33,20 +34,20 @@ class NeighborhoodAcquisition:
             neighbors_positions = NeighborhoodAcquisition._perform_neumann_selection(target_cell_x_pos,target_cell_y_pos)
 
         # debug ---------------------------------------------------
-        sys.stdout.write(YELLOW)
+        sys.stdout.write(ConsoleColor.YELLOW)
         print ("For the cell at position " + str(target_cell_x_pos) + " " + str(target_cell_y_pos) + " you are targeting: ", end = '')
         for position in neighbors_positions:
             print ("\t x: " + str(position[0]) + "\t y: " + str(position[1]))
-        sys.stdout.write(RESET)
+        sys.stdout.write(ConsoleColor.RESET)
 
         # remove out of range positions
         NeighborhoodAcquisition.remove_out_of_bounds_positions(neighbors_positions,cell_matrix)
 
-        sys.stdout.write(GREEN)
+        sys.stdout.write(ConsoleColor.GREEN)
         print ("For the cell at position AND AFTER CLEAN UP" + str(target_cell_x_pos) + " " + str(target_cell_y_pos) + " you are targeting: \n", end = '')
         for position in neighbors_positions:
             print ("\t x: " + str(position[0]) + "\t y: " + str(position[1]))
-        sys.stdout.write(RESET)
+        sys.stdout.write(ConsoleColor.RESET)
 
         # once the not valid positions are removed then get the cells with the targeted coordinates
         output_list = NeighborhoodAcquisition._get_cells_from_positions(neighbors_positions,cell_matrix)
@@ -60,9 +61,9 @@ class NeighborhoodAcquisition:
         if len(output_list) != 0:
             return output_list
         else:
-            sys.stdout.write(RED)
+            sys.stdout.write(ConsoleColor.RED)
             print ("ERROR: No cell found to be returned")
-            sys.stdout.write(RESET)
+            sys.stdout.write(ConsoleColor.RESET)
 
     @staticmethod
     def _perform_moore_selection(target_cell_x_pos,target_cell_y_pos):
@@ -99,9 +100,9 @@ class NeighborhoodAcquisition:
 
             if cell_matrix.check_if_position_inside_matrix(potential_position[0],potential_position[1]) == False:
                 
-                sys.stdout.write(RED)
+                sys.stdout.write(ConsoleColor.RED)
                 print ("\tRemoving position: " + str(potential_position))
-                sys.stdout.write(RESET)
+                sys.stdout.write(ConsoleColor.RESET)
 
                 # Get the not valid positions
                 positions_to_remove.append(potential_position)

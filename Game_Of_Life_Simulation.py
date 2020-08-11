@@ -7,8 +7,9 @@ Created on Tue Aug  4 12:55:40 2020
 import pygame
 import sys
 from Cell_State import CellState
-from colors import *
-from Rule import *
+from colors import ConsoleColor
+from colors import get_random_color
+from Rule import Ruleset
 from random import randint
 from Cell_Simulation_Stages import CellSimulationStages
 
@@ -145,9 +146,9 @@ class BinaryCell(GridObject):
         
     def set_cell_simulation_stage(self, new_simulation_stage):
 
-        sys.stdout.write(BLUE)
+        sys.stdout.write(ConsoleColor.BLUE)
         print ("Setting state: " + new_simulation_stage.name + " to the cell " + str(self.cell_id))
-        sys.stdout.write(RESET)
+        sys.stdout.write(ConsoleColor.RESET)
 
         self._cell_simulation_stage = new_simulation_stage
 
@@ -164,13 +165,13 @@ class BinaryCell(GridObject):
         print ("The cell at: " + ''.join(str(self._position_on_grid))  + " is: ", end = '')        # tuple to string and int to string
         
         if self.state == CellState.FILLED:
-            sys.stdout.write(GREEN)
+            sys.stdout.write(ConsoleColor.GREEN)
             print ("\tFILLED")
-            sys.stdout.write(RESET)
+            sys.stdout.write(ConsoleColor.RESET)
         elif self.state == CellState.EMTPY: 
-            sys.stdout.write(RED)
+            sys.stdout.write(ConsoleColor.RED)
             print ("\tNOT FILLED")
-            sys.stdout.write(RESET)
+            sys.stdout.write(ConsoleColor.RESET)
             
     def compute_new_state(self, ruleset, hosting_cell_matrix):
         # print ("COMPUTING NEW STATE of cell " + str(self.cell_id))
@@ -257,15 +258,16 @@ class GameOfLifeSimulation:
                 cell_instance.print_data()
         
         # check
-        sys.stdout.write(RESET)
+        sys.stdout.write(ConsoleColor.RESET)
         print()
         print ("The amount of cells on the matrix is: " + str(self.cell_matrix.get_cells_count()))
-    
+        sys.stdout.write(ConsoleColor.RESET)
+
     # Update the state of the cells
     def update_cells(self):     
-        sys.stdout.write(LIGHT_BLUE)
+        sys.stdout.write(ConsoleColor.LIGHT_BLUE)
         print ("UPDATING CELLS")
-        sys.stdout.write(RESET)
+        sys.stdout.write(ConsoleColor.RESET)
         
         for cell in self.cell_matrix.get_cells():
 
@@ -279,9 +281,9 @@ class GameOfLifeSimulation:
             cell.update_state()
             
     def compute_cells(self):
-        sys.stdout.write(YELLOW)
+        sys.stdout.write(ConsoleColor.YELLOW)
         print ("COMPUTING CELLS")
-        sys.stdout.write(RESET)
+        sys.stdout.write(ConsoleColor.RESET)
         
         for cell in self.cell_matrix.get_cells():
 
@@ -329,9 +331,9 @@ class GameOfLifeSimulation:
         if (self._current_cell_being_updated != None):
             self._current_cell_being_updated.set_cell_simulation_stage(CellSimulationStages.IDLE)
 
-        sys.stdout.write(YELLOW)
+        sys.stdout.write(ConsoleColor.YELLOW)
         print (self._current_iteration_index)
-        sys.stdout.write(RESET)
+        sys.stdout.write(ConsoleColor.RESET)
 
         cell_to_update = self.cell_matrix.get_cell_by_index(self._current_iteration_index)
         self._current_cell_being_updated = cell_to_update
@@ -347,9 +349,9 @@ class GameOfLifeSimulation:
             return True
 
     def draw_cells(self, screen):
-        sys.stdout.write(LIGHT_GREY)
+        sys.stdout.write(ConsoleColor.LIGHT_GREY)
         print ("DRAWING CELLS")
-        sys.stdout.write(RESET)
+        sys.stdout.write(ConsoleColor.RESET)
   
         for cell in self.cell_matrix.get_cells():          
             cell.draw(screen)
