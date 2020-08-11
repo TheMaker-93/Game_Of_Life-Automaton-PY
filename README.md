@@ -1,4 +1,4 @@
-# 2020: Game_Of_Life-Automaton-PY
+# 2020-Game_Of_Life-Automaton-PY
  Recreation of the automaton "Game Of Life" designed by John Horton Conway as an exercise to improve my Python skills and also as a tribute to John.
 
 Using: 
