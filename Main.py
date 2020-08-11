@@ -99,6 +99,7 @@ while is_simulation_over == False:
         # game_of_life.update_cells()
         # current_simulation_state = SimulationStates.COMPUTING
         
+        # if the return of the function is not none is because it just completed all the cells
         if game_of_life.update_cell_per_cell() != None:
             current_simulation_state = SimulationStates.COMPUTING
 

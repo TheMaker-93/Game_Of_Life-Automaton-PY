@@ -7,7 +7,6 @@ Created on Wed Aug  5 12:13:29 2020
 
 from colors import ConsoleColor
 import sys
-# from Game_Of_Life_Simulation import *
 from neighborhood_acquisition_algoritms import NeighborhoodAcquisitionTypes
 
 class NeighborhoodAcquisition:
@@ -53,9 +52,6 @@ class NeighborhoodAcquisition:
         output_list = NeighborhoodAcquisition._get_cells_from_positions(neighbors_positions,cell_matrix)
         
         NeighborhoodAcquisition.returned_cells = output_list
-        # for cell in output_list:
-        #     print ("Cell output positions \t" + str(cell.get_position_on_grid()))
-        #     cell.set_highlighted_state(True)
 
         # if there is alist of cells to return then return them
         if len(output_list) != 0:
@@ -112,10 +108,6 @@ class NeighborhoodAcquisition:
         # once knonwn the position not valid then remove them
         for position_to_remove in positions_to_remove:
             positions_list.remove(position_to_remove)
-
-        # for removal_index in indexes_to_remove:
-        #     print ("Index to remove: " + str(removal_index) + " from leng: " + str(len(positions_list)))
-        #     positions_list.pop(removal_index)
 
         return positions_list
 

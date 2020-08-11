@@ -8,7 +8,7 @@ Created on Tue Aug  4 13:20:17 2020
 import sys
 from Cell_State import CellState
 from neighborhood_acquisition import NeighborhoodAcquisition
-from colors import *
+from colors import ConsoleColor
 from neighborhood_acquisition_algoritms import NeighborhoodAcquisitionTypes
 
 class Rule:
