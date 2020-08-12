@@ -93,15 +93,11 @@ class Ruleset:
 
         for rule in self._rules:
                       
-            # sys.stdout.write(RED + BOLD)
-            # print ("Checking rule: " + rule.get_rule_name())
             new_state = rule.check_rule(cell,hosting_cell_matrix,neighboring_cells)
-            # sys.stdout.write(RESET)
 
             #Once a rule has been applied then exit the loop
             # None is the default object returned by any function if no return is set
             # therefore, is the returned value is not null means that the function is returning something, then, the rule could be checked
-            # print (str(new_state))
             
             if new_state != None:
                 sys.stdout.write(ConsoleColor.GREEN)

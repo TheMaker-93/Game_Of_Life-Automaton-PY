@@ -8,7 +8,6 @@ Created on Mon Aug 10 12:11:34 2020
 from enum import Enum
 
 class CellState(Enum):
-    
     NOT_DEFINED = -1
-    EMTPY = 0
+    EMPTY = 0
     FILLED = 1

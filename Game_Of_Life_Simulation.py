@@ -53,6 +53,18 @@ class CellMatrix:
     def get_cell_index(self,x_pos,y_pos):
         # Id = Current Row * Matrix Width + Current Coll
         return y_pos * self.coll_amount + x_pos
+          
+    def get_cell_at_pixel(self,x_pixel, y_pixel, screen_width, screen_height):
+        
+        # x position in grid is equal to the pixel x coordindate / width in pixels of the cells
+        x_grid_posiion = x_pixel / (screen_width / self.coll_amount)
+        y_grid_position = y_pixel / (screen_height / self.row_amount)
+        
+        selected_cell = self.get_cell(int(x_grid_posiion), int(y_grid_position))
+        if (selected_cell == None):
+            print ("No cell found for the pixel at x: " + str(x_pixel) + " y: " + str(y_pixel))
+        
+        return selected_cell
 
     def add_cell(self,cell_object):
         self._list_Of_Cells.append(cell_object)
@@ -129,6 +141,12 @@ class BinaryCell(GridObject):
 
     def set_highlighted_state(self, new_state):
         self._is_highlighted = new_state
+    
+    def toggle_highlighted_state(self):
+        self._is_highlighted = not self._is_highlighted
+
+    def get_highlighted(self):
+        return self._is_highlighted
 
     def print_data (self):
         print ("The cell at: " + ''.join(str(self._position_on_grid))  + " is: ", end = '')        # tuple to string and int to string
@@ -137,7 +155,7 @@ class BinaryCell(GridObject):
             sys.stdout.write(ConsoleColor.GREEN)
             print ("\tFILLED")
             sys.stdout.write(ConsoleColor.RESET)
-        elif self.state == CellState.EMTPY: 
+        elif self.state == CellState.EMPTY: 
             sys.stdout.write(ConsoleColor.RED)
             print ("\tNOT FILLED")
             sys.stdout.write(ConsoleColor.RESET)
@@ -147,7 +165,14 @@ class BinaryCell(GridObject):
         self.set_cell_simulation_stage(CellSimulationStages.COMPUTING)
         self.next_state = ruleset.check_rules(self, hosting_cell_matrix)
 
-      
+    def toggle_cell_state(self):
+
+        # make this more elegant
+        if self.state == CellState.FILLED:
+            self.state = CellState.EMPTY
+        elif self.state == CellState.EMPTY:
+            self.state = CellState.FILLED
+
     def update_state(self):
         print ("changing cell state from " + str(self.state.name) + " to " + str(self.next_state.name))     
         self.set_cell_simulation_stage(CellSimulationStages.UPDATING) 
@@ -155,9 +180,12 @@ class BinaryCell(GridObject):
         
     def draw(self,screen):
 
+        # blueprint:
+        # pygame.draw.rect(_surface,_color,pygame.Rect(_top,_left,_width,_height))
+        
         if self.state == CellState.FILLED:
             pygame.draw.rect(screen,(pygame.Color("black")), pygame.Rect(self._position_on_screen,(self._width, self._height)))       # square
-        elif self.state == CellState.EMTPY:
+        elif self.state == CellState.EMPTY:
             pygame.draw.rect(screen,(pygame.Color("white")), pygame.Rect(self._position_on_screen,(self._width, self._height)))
             pygame.draw.rect(screen,pygame.Color("black"), pygame.Rect(self._position_on_screen,(self._width, self._height)),1)
         elif self.state == CellState.NOT_DEFINED:
@@ -173,10 +201,7 @@ class BinaryCell(GridObject):
             elif self._cell_simulation_stage == CellSimulationStages.COMPUTING:
                 pygame.draw.rect(screen,(pygame.Color("blue")), pygame.Rect(self._position_on_screen ,(self._width*0.8, self._height*0.8)))       # square
 
-        # blueprint
-        # pygame.draw.rect(_surface,_color,pygame.Rect(_top,_left,_width,_height))
-        
-        
+
 
 
 class GameOfLifeSimulation:
@@ -193,7 +218,7 @@ class GameOfLifeSimulation:
     def __init__(self,coll_amount, row_amount, screen_width, screen_height, ruleset):
 
         # create the matrix    
-        self.cell_matrix = CellMatrix((0,0), (100,100), row_amount, coll_amount)
+        self.cell_matrix = CellMatrix((0,0), (screen_width,screen_height), row_amount, coll_amount)
         
         # add the ruleset
         self._ruleset = ruleset
@@ -304,9 +329,9 @@ class GameOfLifeSimulation:
             return True
 
     def draw_cells(self, screen):
-        sys.stdout.write(ConsoleColor.LIGHT_GREY)
-        print ("DRAWING CELLS")
-        sys.stdout.write(ConsoleColor.RESET)
+        # sys.stdout.write(ConsoleColor.LIGHT_GREY)
+        # print ("DRAWING CELLS")
+        # sys.stdout.write(ConsoleColor.RESET)
   
         for cell in self.cell_matrix.get_cells():          
             cell.draw(screen)

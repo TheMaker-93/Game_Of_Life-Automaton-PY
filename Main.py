@@ -19,6 +19,7 @@ from random import seed
 
 # from enum import Enum
 from Simulation_States import SimulationStates
+from Cellular_Automaton_Execution_Stage import CellularAutomatonExecutionStage
 
 
 # START PYGAME ------------------------------------------------------------------------------------------------------------------ #
@@ -32,7 +33,7 @@ SCREEN_TITLE = "Game_Of_Life"
 SCREEN_SIZE_MULTIPLIER = (1,1)
 SCREEN_COMPUTED_SIZE = (int(SCREEN_BASE_SIZE[0] * SCREEN_SIZE_MULTIPLIER[0]) ,int(SCREEN_BASE_SIZE[1] * SCREEN_SIZE_MULTIPLIER[1]))
 clock = pygame.time.Clock()
-TICK_RATE = 1000
+TICK_RATE = 60
 is_simulation_over = False
 
 # create the new window
@@ -42,18 +43,20 @@ pygame.display.set_caption(SCREEN_TITLE)
 
 # EXECUTION --------------------------------------------------------------------------------------------------------------------- #
     
-ROW_AMOUNT = 120
-COLL_AMOUNT = 120
+ROW_AMOUNT = 30
+COLL_AMOUNT = 30
 MATRIX_INITIALIZATION_SEED = 0
 
 # CREATE THE RULES -------------------------------------------------------------------------------------------------------------- #
 
+# Here we create the rules that the system will be using
 simulation_rules = []
-simulation_rules.append(Rule("Death by underpopulation",CellState.FILLED,CellState.FILLED,0,1,CellState.EMTPY))
+simulation_rules.append(Rule("Death by underpopulation",CellState.FILLED,CellState.FILLED,0,1,CellState.EMPTY))
 simulation_rules.append(Rule("sustainable life",CellState.FILLED,CellState.FILLED,2,3,CellState.FILLED))
-simulation_rules.append(Rule("Death by overpopulation",CellState.FILLED,CellState.FILLED,4,8,CellState.EMTPY))     # -1 == infinito a la hora de comprobarlo
-simulation_rules.append(Rule("Birth",CellState.EMTPY,CellState.FILLED,3,3,CellState.FILLED))
+simulation_rules.append(Rule("Death by overpopulation",CellState.FILLED,CellState.FILLED,4,8,CellState.EMPTY))     # -1 == infinito a la hora de comprobarlo
+simulation_rules.append(Rule("Birth",CellState.EMPTY,CellState.FILLED,3,3,CellState.FILLED))
 
+# and pack them into the ruleset object
 game_of_life_ruleset = Ruleset(simulation_rules)
 
 sys.stdout.write(ConsoleColor.YELLOW + ConsoleColor.BOLD)     # set the color of the text
@@ -72,40 +75,71 @@ sys.stdout.write(ConsoleColor.RESET)             # RESET the color of the text
 
 
 # # MAIN SYSTEM LOOP -------------------------------------------------------------------------------------------------------------
-current_simulation_state = SimulationStates.COMPUTING
+current_interaction_state = CellularAutomatonExecutionStage.EDIT_MODE   # state of the simulation (edit or play)
+current_simulation_state = SimulationStates.COMPUTING                   # internal state of the simulation (computing or applying states)
+
+is_mouse_Up = True                  # is the mouse up after a click?
+targeted_cell = None                # selected cell
+previously_targeted_cell = None     # previously selected cell
+is_space_pressed = False
+
 while is_simulation_over == False:
     
     e = pygame.event.poll()
-    if e.type == pygame.QUIT:
+    if e.type == pygame.QUIT:               # EXIT event
         is_simulation_over = True
-    
+        
+    elif e.type == pygame.KEYUP:            # EDIT/PLAY toggle event
+        if e.key == pygame.K_SPACE:
+            # make this more elegant dani
+            if current_interaction_state == CellularAutomatonExecutionStage.EDIT_MODE:
+                current_interaction_state = CellularAutomatonExecutionStage.PLAY_MODE
+            else:
+                current_interaction_state = CellularAutomatonExecutionStage.EDIT_MODE
+            is_space_pressed = True
+
+    elif e.type == pygame.MOUSEBUTTONUP:    # edit mode CELL STATE toggle
+        is_mouse_Up = True
+        
     pygame.display.update()
     clock.tick(TICK_RATE)
     
     # tick rate testing (background)
     # screen.fill(get_random_color(False))
 
-    # ACT DEPENDING THE SIMULATION STATE
-    if current_simulation_state == SimulationStates.COMPUTING:
-        # game_of_life.compute_cells()
-        #current_simulation_state = SimulationStates.UPDATING
+    # execution of the automata
+    if current_interaction_state == CellularAutomatonExecutionStage.PLAY_MODE:
 
-        # if the return of the function is not none is because it just completed all the cells
-        if game_of_life.compute_cell_per_cell() != None:
-            current_simulation_state = SimulationStates.UPDATING
+        # ACT DEPENDING THE SIMULATION STATE
+        if current_simulation_state == SimulationStates.COMPUTING:
+            # if the return of the function is not none is because it just completed all the cells
+            if game_of_life.compute_cell_per_cell() != None:
+                current_simulation_state = SimulationStates.UPDATING
 
+        elif current_simulation_state == SimulationStates.UPDATING:
+            # if the return of the function is not none is because it just completed all the cells
+            if game_of_life.update_cell_per_cell() != None:
+                current_simulation_state = SimulationStates.COMPUTING
+    
+    # Automata edit state
+    else:
 
-    elif current_simulation_state == SimulationStates.UPDATING:
-        # game_of_life.update_cells()
-        # current_simulation_state = SimulationStates.COMPUTING
-        
-        # if the return of the function is not none is because it just completed all the cells
-        if game_of_life.update_cell_per_cell() != None:
-            current_simulation_state = SimulationStates.COMPUTING
+        # mouse primary button pressed
+        if pygame.mouse.get_pressed()[0]:
+            # get mouse position
+            mouse_screen_position = pygame.mouse.get_pos()
 
+            if targeted_cell is not None:   
+                previously_targeted_cell = targeted_cell
 
-    # debug cells data
-    # game_of_life.cell_matrix.print_cells_data()
+            targeted_cell = game_of_life.cell_matrix.get_cell_at_pixel(mouse_screen_position[0],mouse_screen_position[1],SCREEN_COMPUTED_SIZE[0],SCREEN_COMPUTED_SIZE[1])
+            
+            if targeted_cell != None:
+                if (is_mouse_Up == True):
+                    # targeted_cell.toggle_highlighted_state()
+                    targeted_cell.toggle_cell_state()
+
+            is_mouse_Up = False
 
     # redraw the matrix
     game_of_life.draw_cells(screen)
