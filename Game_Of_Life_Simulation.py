@@ -215,7 +215,7 @@ class GameOfLifeSimulation:
     _current_cell_being_computed = None
     _current_cell_being_updated = None
     
-    def __init__(self,coll_amount, row_amount, screen_width, screen_height, ruleset):
+    def __init__(self,coll_amount, row_amount, screen_width, screen_height, ruleset, start_with_emtpy_matrix):
 
         # create the matrix    
         self.cell_matrix = CellMatrix((0,0), (screen_width,screen_height), row_amount, coll_amount)
@@ -235,7 +235,10 @@ class GameOfLifeSimulation:
                 x_position = (coll / (coll_amount-1)) + width * coll
                 y_position = (row / (row_amount-1)) + height * row
 
-                start_cell_state = CellState(randint(0,1))
+                if start_with_emtpy_matrix == False:
+                    start_cell_state = CellState(randint(0,1))
+                else:
+                    start_cell_state = CellState.EMPTY
                 
                 # ------------------------------------------------------------------------------------------ #
                 cell_instance = BinaryCell(start_cell_state,(x_position,y_position),(coll,row),width, height, row * coll_amount + coll)          # create a new cell

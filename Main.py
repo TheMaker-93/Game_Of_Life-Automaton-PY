@@ -22,6 +22,20 @@ from Simulation_States import SimulationStates
 from Cellular_Automaton_Execution_Stage import CellularAutomatonExecutionStage
 
 
+# AUTOMATON EXECUTION PREFERENCES --------------------------------------------------------------------------------------------------------------------- #
+    
+ROW_AMOUNT = 30                 # SET THE AMOUNT OF ROWS OF THE CELL MATRIX
+COLL_AMOUNT = 30                # SET THE AMOUNT OF COLLUMNS OF THE CELL MATRIX
+
+START_MATRIX_EMPTY = False       # DECIDES IF THE MATRIX OF CELLS STARTS EMTPY OR WITH A RANDOM STATE (PER CELL)
+MATRIX_INITIALIZATION_SEED = 0  # SET THE SEED FOR THE INITIALIZATION OF THE GRID
+
+STARTING_INTERACTION_STATE = CellularAutomatonExecutionStage.PLAY_MODE
+"""
+CellularAutomatonExecutionStage.EDIT_MODE       --> TO PAINT FILLED AND EMPTY CELLS ONTO THE MATRIX
+CellularAutomatonExecutionStage.PLAY_MODE       --> TO EXECUTE THE AUTOMATON
+"""
+
 # START PYGAME ------------------------------------------------------------------------------------------------------------------ #
 
 # Initialize Screen
@@ -40,12 +54,6 @@ is_simulation_over = False
 screen = pygame.display.set_mode(( SCREEN_COMPUTED_SIZE[0] ,SCREEN_COMPUTED_SIZE[1]))     # INITIALIZE WINDOW
 screen.fill((255, 255, 255))
 pygame.display.set_caption(SCREEN_TITLE)
-
-# EXECUTION --------------------------------------------------------------------------------------------------------------------- #
-    
-ROW_AMOUNT = 30
-COLL_AMOUNT = 30
-MATRIX_INITIALIZATION_SEED = 0
 
 # CREATE THE RULES -------------------------------------------------------------------------------------------------------------- #
 
@@ -67,7 +75,7 @@ sys.stdout.write(ConsoleColor.RESET)             # RESET the color of the text
 # CREATE SIMULATION ------------------------------------------------------------------------------------------------------------- #
 sys.stdout.write(ConsoleColor.BLUE)
 seed(MATRIX_INITIALIZATION_SEED)                  # set the seed for the random initialization
-game_of_life = GameOfLifeSimulation(COLL_AMOUNT, ROW_AMOUNT,SCREEN_COMPUTED_SIZE[0],SCREEN_COMPUTED_SIZE[1],game_of_life_ruleset)
+game_of_life = GameOfLifeSimulation(COLL_AMOUNT, ROW_AMOUNT,SCREEN_COMPUTED_SIZE[0],SCREEN_COMPUTED_SIZE[1],game_of_life_ruleset, START_MATRIX_EMPTY)
 
 sys.stdout.write(ConsoleColor.YELLOW + ConsoleColor.BOLD)     # set the color of the text
 print ("\t Setup performed succesfully")
@@ -75,7 +83,7 @@ sys.stdout.write(ConsoleColor.RESET)             # RESET the color of the text
 
 
 # # MAIN SYSTEM LOOP -------------------------------------------------------------------------------------------------------------
-current_interaction_state = CellularAutomatonExecutionStage.EDIT_MODE   # state of the simulation (edit or play)
+current_interaction_state = STARTING_INTERACTION_STATE                  # state of the simulation (edit or play)
 current_simulation_state = SimulationStates.COMPUTING                   # internal state of the simulation (computing or applying states)
 
 is_mouse_Up = True                  # is the mouse up after a click?
