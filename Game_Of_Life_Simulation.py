@@ -228,9 +228,9 @@ class GameOfLifeSimulation:
         height = screen_height / row_amount
                 
         # iteration over the X (colls)
-        for row in range (0,coll_amount):
+        for row in range (0,row_amount):
             # iterateion over the Y (rows)
-            for coll in range (0, row_amount):
+            for coll in range (0, coll_amount):
                 
                 x_position = (coll / (coll_amount-1)) + width * coll
                 y_position = (row / (row_amount-1)) + height * row
