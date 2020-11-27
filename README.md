@@ -4,3 +4,6 @@
 Using: 
 1. [Python](https://www.python.org/downloads/)
 2. [Pygame](https://www.pygame.org/download.shtml)
+
+Demo Video:
+https://www.youtube.com/watch?v=WrMhXAVGdKU&feature=youtu.be
